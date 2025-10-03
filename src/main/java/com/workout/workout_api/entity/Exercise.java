@@ -1,12 +1,11 @@
 package com.workout.workout_api.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Min;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Exercise {
@@ -19,21 +18,21 @@ public class Exercise {
 
     private String category;
 
-    @NotNull(message = "Weight is required")
-    @Min(value = 1, message = "Weight must be greater than 0")
-    private Integer weight;
+    @ManyToOne
+    @JoinColumn(name = "session_id")
+    @JsonIgnore
+    private Session session;
 
-    @NotNull(message = "Reps is required")
-    @Min(value = 1, message = "Reps must be greater than 0")
-    private Integer reps;
+
+    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
+    private List<ExerciseSet> sets = new ArrayList<>();
+
 
     public Exercise() {}
 
-    public Exercise(String name, String category, Integer weight, Integer reps) {
+    public Exercise(String name, String category) {
         this.name = name;
         this.category = category;
-        this.weight = weight;
-        this.reps = reps;
     }
 
     public Long getId() {
@@ -57,18 +56,17 @@ public class Exercise {
         this.category = category.toUpperCase();
     }
 
-    public Integer getWeight() {
-        return weight;
+    public Session getSession() {
+        return session;
     }
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public Integer getReps() {
-        return reps;
-    }
-    public void setReps(Integer reps) {
-        this.reps = reps;
+    public void setSession(Session session) {
+        this.session = session;
     }
 
+    public List<ExerciseSet> getSets() {
+        return sets;
+    }
+    public void setSets(List<ExerciseSet> sets) {
+        this.sets = sets;
+    }
 }
